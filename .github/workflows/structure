@@ -1,0 +1,40 @@
+name: CI/CD pipeline #name of the work flow
+on:
+  push: # Trigger the work on push event
+    branches: 
+      - main # specify the branch to trigger on
+  pull_request: # Trigger the work on pull request event
+     branches:
+      - main # specify the branch to trigger on
+  schedule: #trigger the work flow on schedules
+    - cron : '0 0 * * *' # runs daily at midnight
+  workflow_dispatch: # allow manual triggering of the work flow
+release: #trigger the workflow on release event 
+   type : [created] # specify the type of release event to trigger on
+
+jobs: # Define the ob to run in the workflow
+  build: #name of the on 
+    runs-on: ubuntu-latest # Specify the runner environment
+    steps: # Define the steps to execute in the jobs
+      - name: check out code # step to checkout the code 
+        uses: action/checkout@v2
+
+      - name: Install depndencies # step to install dependencies
+        run : npm install # Run npm install command
+        uses:
+        with:
+          node-version: '14' # specify the Node.js version
+
+      - name : Install dependencies
+        run : npm test 
+
+      - name: Build project  # step to build the project
+        run: npm run build # Run npm run build command
+      - name: Deploy #step to deploy project
+        run: |
+          echo "Deploying the project......"
+          echo "Deployment complete"
+          echo "Deployment sucessful"
+          cd build #changing to build directory
+          # Add deployment command here eg scp,rsyn, cloud deployment command
+ 

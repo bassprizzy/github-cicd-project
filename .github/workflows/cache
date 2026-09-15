@@ -1,0 +1,35 @@
+name: Cache Demo
+on:
+  push:
+    branches:
+      - main 
+jobs:
+  cache-example:
+    runs-on : ubuntu-latest 
+    steps:
+      - name: Checkout code 
+        uses: action/checkout@v2
+      - name: Set up Node.js
+        uses: action/setup-node@v2
+        with:
+          node-version: '14'
+      
+      - name: Install dependencies with caching 
+        run:  npm ci
+      - name: cache node_modules
+        uses: action/cache@v4
+        with:
+          path: node_modules
+          key: ${{runner.os}}-node-${{hashfiles('package-lock.json')}}
+          restore-keys: |
+            ${{runner.os}}-node-
+
+      - name: cache python dependencies
+        uses: action/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{runner.os}}-pip-${{hashfiles('requirements.txt')}}
+          restore-keys: |
+            ${{runner.os}}-pip-
+
+
